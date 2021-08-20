@@ -19,7 +19,7 @@ pipeline {
          stage('Post Build') {
             steps {
                 echo 'copy to s3'
-                s3CopyArtifact buildSelector: lastSuccessful(stable: true), excludeFilter: '', filter: '**/*.war', flatten: true, optional: false, projectName: 'ansible-project', target: ''
+                s3Upload consoleLogLevel: 'INFO', dontSetBuildResultOnFailure: false, dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: '', excludedFile: '', flatten: true, gzipFiles: false, keepForever: false, managedArtifacts: false, noUploadOnFailure: true, selectedRegion: 'ap-east-1', showDirectlyInBrowser: false, sourceFile: '**/*.war', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], pluginFailureResultConstraint: 'FAILURE', profileName: 'new-project1234', userMetadata: []
                 
             }
         }
