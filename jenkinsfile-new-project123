@@ -19,8 +19,7 @@ pipeline {
          stage('Post Build') {
             steps {
                 echo 'copy to s3'
-                s3Upload consoleLogLevel: 'INFO', dontSetBuildResultOnFailure: false, dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: '', excludedFile: '', flatten: true, gzipFiles: false, keepForever: false, managedArtifacts: false, noUploadOnFailure: true, selectedRegion: 'ap-south-1', showDirectlyInBrowser: false, sourceFile: '**/*.war', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], pluginFailureResultConstraint: 'FAILURE', profileName: 'new-project1234', userMetadata: []
-            
+                sh 'aws s3 cp $WORKSPACE/target/LoginRegisterApp.war s3://new-project1234/${BUILD_ID}'
             }
             
         }
