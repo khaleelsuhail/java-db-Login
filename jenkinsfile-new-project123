@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+     tools {
+        // Install the Maven version configured as "M3" and add it to the path.
+        maven "maven_path"
+    }
+    stages {
+        stage('fetch the code') {
+            steps {
+                git credentialsId: 'jenkins-git cred', url: 'https://github.com/khaleelsuhail/java-db-Login.git'
+            }
+        }
+        stage('Build the code') {
+            steps {
+                //tool name: 'maven', type: 'maven'
+                sh 'mvn clean package'
+            }
+        }
+         stage('Post Build') {
+            steps {
+                echo 'copy to s3'
+                sh 'aws s3 cp $WORKSPACE/target/LoginRegisterApp.war s3://new-project1234/${BUILD_ID}'
+            }
+            
+        }
+        
+        stage('Publish over SSH') {
+            steps {
+                echo 'run ansible playbook'
+                sshPublisher(publishers: [sshPublisherDesc(configName: 'ansadmin', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'ansible-playbook /etc/ansible/new-project123.yml', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: true)])
+                
+            }
+        }
+    }
+}
